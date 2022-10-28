@@ -1,0 +1,62 @@
+/home/mobsf/.MobSF/uploads
+
+https://github.com/kpraveenkumar229/ppt.git
+
+Task list for for HMT
+Task List for myCardioMEMS
+Embadded DevOps
+
+3z1#i2(&8zo^8)z+c+f_+1p_4)_=*y5mliw7co586**=#$p&x)
+
+	
+C:\Users\LENOVO\Desktop\git\ppt
+
+curl -d '@8.apk' http://localhost:8000/api/v1/upload -H "Authorization:f06ecb3505899296f03b0c21d7dc5baf83fb999e3d0b4c1243874c82c0184874"
+
+curl -F 'file=@/Users/DESKTOP-QS88SSN/C:/Users/LENOVO/Desktop/git/ppt/8.apk' http://localhost:8000/api/v1/upload -H "Authorization:f06ecb3505899296f03b0c21d7dc5baf83fb999e3d0b4c1243874c82c0184874"
+
+curl -F 'file=@/Users/ajin/Desktop/diva-beta.apk' http://localhost:8000/api/v1/upload -H "Authorization:f06ecb3505899296f03b0c21d7dc5baf83fb999e3d0b4c1243874c82c0184874"
+
+curl -F 'file=8.apk' http://localhost:8000/api/v1/upload -H "Authorization:f06ecb3505899296f03b0c21d7dc5baf83fb999e3d0b4c1243874c82c0184874"
+
+
+#Upload:In Docker MobSF
+
+curl -F 'file=@8.apk' http://localhost:8000/api/v1/upload -H "Authorization:f06ecb3505899296f03b0c21d7dc5baf83fb999e3d0b4c1243874c82c0184874"
+{"analyzer": "static_analyzer", "status": "success", "hash": "f124a045891965b1d183372dd35d5ca2", "scan_type": "apk", "file_name": "8.apk"}mobsf@0bc729879636:~/ppt$
+
+#output Example
+Code: 200
+Content-Type: application/json; charset=utf-8
+Content: {"file_name": "diva-beta.apk", "hash": "82ab8b2193b3cfb1c737e3a786be363a", "scan_type": "apk"}
+
+#Upload in CMD
+curl -F "file=@C:/Users/LENOVO/Desktop/git/ppt/8.apk" http://localhost:8000/api/v1/upload -H "Authorization:f06ecb3505899296f03b0c21d7dc5baf83fb999e3d0b4c1243874c82c0184874"
+
+C:\Users\LENOVO\Desktop\git\ppt>curl -F "file=@C:/Users/LENOVO/Desktop/git/ppt/8.apk" http://localhost:8000/api/v1/upload -H "Authorization:f06ecb3505899296f03b0c21d7dc5baf83fb999e3d0b4c1243874c82c0184874"
+{"analyzer": "static_analyzer", "status": "success", "hash": "f124a045891965b1d183372dd35d5ca2", "scan_type": "apk", "file_name": "8.apk"}
+
+#Scan:
+curl -X POST --url http://localhost:8000/api/v1/scan --data "scan_type=apk&file_name=8.apk&hash=f124a045891965b1d183372dd35d5ca2" -H "Authorization:f06ecb3505899296f03b0c21d7dc5baf83fb999e3d0b4c1243874c82c0184874"
+curl -X POST --url http://localhost:8000/api/v1/scan --data "scan_type=apk&file_name=8.apk&hash=f124a045891965b1d183372dd35d5ca2" -H "Authorization:f06ecb3505899296f03b0c21d7dc5baf83fb999e3d0b4c1243874c82c0184874"
+
+curl --url "http://localhost:8000/api/v1/scans" -H "Authorization:f06ecb3505899296f03b0c21d7dc5baf83fb999e3d0b4c1243874c82c0184874"
+
+#PDF Report:
+curl -X POST --url http://localhost:8000/api/v1/download_pdf --data "hash=f124a045891965b1d183372dd35d5ca2" -H "Authorization:f06ecb3505899296f03b0c21d7dc5baf83fb999e3d0b4c1243874c82c0184874" --output pdffffffffffff.pdf
+
+
+
+
+#Upload
+curl -F "file=@C:/Users/LENOVO/Desktop/git/ppt/debug_20221003.apk" http://localhost:8000/api/v1/upload -H "Authorization:f06ecb3505899296f03b0c21d7dc5baf83fb999e3d0b4c1243874c82c0184874"
+
+
+#Scan
+curl -X POST --url http://localhost:8000/api/v1/scan --data "scan_type=apk&file_name=debug_20221003.apk&hash=228bcdd0f603fa71aec18cc74c07d925" -H "Authorization:f06ecb3505899296f03b0c21d7dc5baf83fb999e3d0b4c1243874c82c0184874"
+
+#PDF
+curl -X POST --url http://localhost:8000/api/v1/download_pdf --data "hash=228bcdd0f603fa71aec18cc74c07d925" -H "Authorization:f06ecb3505899296f03b0c21d7dc5baf83fb999e3d0b4c1243874c82c0184874" --output mobsf.pdf
+
+
+
