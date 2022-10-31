@@ -1,0 +1,33 @@
+
+ansible-playbook file.yaml --extra-var p=helllllllo
+
+
+- hosts: app
+  become: true
+  tasks:
+   - name: Configure sshd
+     ansible.builtin.lineinfile:
+       path: "/etc/ssh/sshd_config"
+       insertafter: "# To disable tunneled clear text passwords, change to no here!"
+       regex: "^(#)?{{item.key}}"
+       line: "{{item.key}}{{item.value}}"
+       state: present
+       backrefs: yes
+     loop:
+       - { key: "PasswordAuthentication=", value: "{{p}}" }
+
+
+ansible@ip-172-31-19-124:~$ ansible-playbook file.yaml --extra-var p=helllll
+
+PLAY [app] *****************************************************************************************************************************************************************
+
+TASK [Gathering Facts] *****************************************************************************************************************************************************
+ok: [54.157.51.141]
+
+TASK [Configure sshd] ******************************************************************************************************************************************************
+changed: [54.157.51.141] => (item={'key': 'PasswordAuthentication=', 'value': 'helllll'})
+
+PLAY RECAP *****************************************************************************************************************************************************************
+54.157.51.141              : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
+ansible@ip-172-31-19-124:

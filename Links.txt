@@ -1,0 +1,6 @@
+Ansible-Choccklety:
+https://docs.ansible.com/ansible/2.9_ja/modules/win_chocolatey_facts_module.html
+
+https://www.educba.com/ansible-windows-modules/
+
+https://github.com/chocolatey/chocolatey-ansible

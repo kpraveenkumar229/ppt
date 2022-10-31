@@ -1,0 +1,37 @@
+- hosts: app
+  become: true
+  tasks:
+   - name: Configure sshd
+     lineinfile:
+       path: "/etc/ssh/sshd_config"
+       after: "# To disable tunneled clear text passwords, change to no here!"
+       regex: "^(#)?{{item.key}}"
+       line: "{{item.key}} {{item.value}}"
+       state: present
+     loop:
+       - { key: "PasswordAuthentication", value: "yes"}
+
+- name: Ensure the default Apache port is 8080
+  ansible.builtin.lineinfile:
+    path: /etc/httpd/conf/httpd.conf
+    regexp: '^Listen '
+    insertafter: '^#Listen '
+    line: Listen 8080
+
+
+- hosts: app
+  become: true
+  tasks:
+   - name: Configure sshd
+     ansible.builtin.lineinfile:
+       path: "/etc/ssh/sshd_config"
+       insertafter: "# To disable tunneled clear text passwords, change to no here!"
+       regex: "^(#)?{{item.key}}"
+       line: "{{item.key}} {{item.value}}"
+       state: present
+     loop:
+       - { key: "PasswordAuthentication", value: "yes"}
+
+
+
+	

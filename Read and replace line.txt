@@ -1,0 +1,22 @@
+- hosts: app
+  become: true
+  tasks:
+   - name: Configure sshd
+     shell: cat /etc/ssh/file.config
+     register: read
+   - name: Print returned information
+     ansible.builtin.debug:
+       msg: "{{ read }}"
+
+
+- hosts: app
+  become: true
+  tasks:
+   - name: Configure sshd
+     ansible.builtin.lineinfile:
+       path: "/etc/ssh/file.config"
+       regex: "^{{ c }}"
+       line: "{{ p }}"
+
+
+   

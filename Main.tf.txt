@@ -1,0 +1,12 @@
+
+resource "aws_instance" "AWSEC2Instance" {
+  count           = "1"
+  ami             = "ami-052efd3df9dad4825"
+  instance_type   = "t2.micro"
+  security_groups = ["all"]
+  user_data       = "$(file(shell.sh)"
+  key_name        = "new"
+  tags = {
+    Name = "Test Hello Terraform ${count.index}"
+  }
+}

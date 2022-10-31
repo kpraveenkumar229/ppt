@@ -1,0 +1,20 @@
+-Ansible Document link for windows-https://docs.ansible.com/ansible/latest/user_guide/windows_setup.html#
+
+On Winwows Host:
+-Create Ansible User and password
+
+On Linux Host inventory file172.31.20.218
+[win]
+54.172.107.230
+[win:vars]
+ansible_user=ansible
+ansible_password=krish4245@P
+ansible_port=5986
+ansible_connection=winrm
+ansible_winrm_scheme=https
+ansible_winrm_server_cert_validation=ignore
+ansible_winrm_kerberos_delegation=true
+
+
+Important: In Security Groups need to allow ports (All TCP)
+-

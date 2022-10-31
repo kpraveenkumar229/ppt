@@ -1,0 +1,48 @@
+---
+
+- name: Installing Apache MSI
+
+  hosts: win
+
+  tasks:
+    - name: Install git
+      win_chocolatey:
+        name: git
+        state: present
+
+- name: Installing Apache MSI
+
+  hosts: win
+  tasks: win
+    - name: Install multiple packages sequentially
+      win_chocolatey:
+        name: '{{ item }}'
+        state: present
+      loop:
+      - procexp
+      - putty
+      - windirstat
+
+ 
+- name: Installing Apache MSI
+
+  hosts: win
+  tasks: win
+  - name: Gather facts from chocolatey
+    win_chocolatey_facts:
+
+  - name: Displays the Configuration
+    debug:
+      var: ansible_chocolatey.config
+
+  - name: Displays the Feature
+    debug:
+      var: ansible_chocolatey.feature
+
+  - name: Displays the Sources
+    debug:
+      var: ansible_chocolatey.sources
+
+- name: Displays the Packages
+  debug:
+    var: ansible_chocolatey.packages
