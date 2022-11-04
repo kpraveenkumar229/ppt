@@ -1,0 +1,9 @@
+curl -F "file=@C:\agent\_work\17\a\app\build\outputs\apk\q3\q3_20221104.apk" http://localhost:8000/api/v1/upload -H "Authorization:d8b2233a1a830f8528ff3fef49f1bd28f2fbcba61b0544340b05b9c2f232b818" > mobsf.txt
+
+var1=`cat mobsf.txt | awk -F ' ' '{print $6}' | tr -d '",'`
+var2=`cat mobsf.txt | awk -F ' ' '{print $10}' | tr -d '"},'`
+
+
+curl -X POST --url http://localhost:8000/api/v1/scan --data "scan_type=apk&file_name=${var2}&hash=${var1}" -H "Authorization:d8b2233a1a830f8528ff3fef49f1bd28f2fbcba61b0544340b05b9c2f232b818"
+
+curl -X POST --url http://localhost:8000/api/v1/download_pdf --data "hash=${var1}" -H "Authorization:d8b2233a1a830f8528ff3fef49f1bd28f2fbcba61b0544340b05b9c2f232b818" --output mobSF.pdf
