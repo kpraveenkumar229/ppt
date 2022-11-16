@@ -1,0 +1,4 @@
+POST https://dev.azure.com/{organization}/{project}/_apis/pipelines/{pipelineId}/runs?api-version=6.0-preview.1
+or
+
+POST https://dev.azure.com/{organization}/{project}/_apis/pipelines/{pipelineId}/runs?pipelineVersion={pipelineVersion}&api-version=6.0-preview.1
