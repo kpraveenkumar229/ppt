@@ -1,0 +1,33 @@
+Date format:for Shell Linux
+$ dt=`date -u +%Y%m%d`
+
+Example:
+testpocuser@hf-win10-poc-do MINGW64 ~
+$ echo $dt
+20221117
+
+
+Date command for CMD:
+set year=%date:~10,4%
+set month=%date:~4,2%
+set day=%date:~7,2%
+set dt=%year%%month%%day%
+echo "date is : %dt%"
+
+Example:
+C:\Users\KUMARPX271>echo "date is : %dt%"
+"date is : 20221117"
+
+
+#To Upload APK file to mobSF:
+curl -F "file=@C:\agent\_work\17\a\app\build\outputs\apk\q3\q3_20221104.apk" http://localhost:8000/api/v1/upload -H "Authorization:d8b2233a1a830f8528ff3fef49f1bd28f2fbcba61b0544340b05b9c2f232b818" > mobsf.txt
+
+# To Filter the above command and get the hash and file name:
+var1=`cat mobsf.txt | awk -F ' ' '{print $6}' | tr -d '",'`
+var2=`cat mobsf.txt | awk -F ' ' '{print $10}' | tr -d '"},'`
+
+#To Scan the APK file from mobSF:
+curl -X POST --url http://localhost:8000/api/v1/scan --data "scan_type=apk&file_name=${var2}&hash=${var1}" -H "Authorization:d8b2233a1a830f8528ff3fef49f1bd28f2fbcba61b0544340b05b9c2f232b818"
+
+#To Download the result pdf file from the mobSF tool:
+curl -X POST --url http://localhost:8000/api/v1/download_pdf --data "hash=${var1}" -H "Authorization:d8b2233a1a830f8528ff3fef49f1bd28f2fbcba61b0544340b05b9c2f232b818" --output mobSF.pdf
