@@ -31,3 +31,24 @@ curl -X POST --url http://localhost:8000/api/v1/scan --data "scan_type=apk&file_
 
 #To Download the result pdf file from the mobSF tool:
 curl -X POST --url http://localhost:8000/api/v1/download_pdf --data "hash=${var1}" -H "Authorization:d8b2233a1a830f8528ff3fef49f1bd28f2fbcba61b0544340b05b9c2f232b818" --output mobSF.pdf
+
+
+#Example:
+
+$ curl -F "file=@C:\agent\_work\17\a\app\build\outputs\apk\q3\q3_20221117.apk" http://localhost:8000/api/v1/upload -H "Authorization:d8b2233a1a830f8528ff3fef49f1bd28f2fbcba61b0544340b05b9c2f232b818" > mobsf.txt
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 17.7M    0   148  100 17.7M    152  18.2M --:--:-- --:--:-- --:--:-- 18.2M
+testpocuser@hf-win10-poc-do MINGW64 ~
+$ var1=`cat mobsf.txt | awk -F ' ' '{print $6}' | tr -d '",'`                                                                                                                       
+testpocuser@hf-win10-poc-do MINGW64 ~
+$ var2=`cat mobsf.txt | awk -F ' ' '{print $10}' | tr -d '"},'`                                                                                                                     
+testpocuser@hf-win10-poc-do MINGW64 ~
+$ echo $var1
+fd4271081bdb1d32f61d7d939da301ac
+
+testpocuser@hf-win10-poc-do MINGW64 ~
+$ echo $var2
+q3_20221117.apk
+
+
