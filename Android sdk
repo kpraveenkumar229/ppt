@@ -1,0 +1,49 @@
+sudo apt-get update
+2. sudo apt install openjdk-8-jdk
+sudo apt install android-sdk
+sudo mkdir /usr/lib/android-sdk/cmdline-tools
+5. cd /us/lib/android-sdk/cmdline-tools
+sudo wget https://dl
+google.com/android/repository/commandlinetools-linux-6609375_latest.zip
+sudo unzip commandlinetools-linux-6609375_ latest.zip
+sudo rm commandlinetools-linux-6609375_latest.zip
+rm commandlinetools-linux-6609375 latest.zip
+10. export ANDROID_HOME=/us/lib/android-sdk/
+export PATH=$PATH: $ANDROID_HOME /cmdline-tools/tools/bin
+12. export PATH-$PATH: $ANDROID_HOME/platform-tools
+13. sdkmanager --version
+14. sdkmanager --list
+
+sudo apt-get update
+2. sudo apt install openjdk-8-jdk
+sudo apt install android-sdk
+sudo mkdir /usr/lib/android-sdk/cmdline-tools
+5. cd /us/lib/android-sdk/cmdline-tools
+sudo wget https://dl
+google.com/android/repository/commandlinetools-linux-6609375_latest.zip
+sudo unzip commandlinetools-linux-6609375_ latest.zip
+sudo rm commandlinetools-linux-6609375_latest.zip
+rm commandlinetools-linux-6609375 latest.zip
+10. export ANDROID_HOME=/us/lib/android-sdk/
+export PATH=$PATH: $ANDROID_HOME /cmdline-tools/tools/bin
+12. export PATH-$PATH: $ANDROID_HOME/platform-tools
+13. sdkmanager --version
+14. sdkmanager --sdkmanager
+sdkmanager
+sudo chmod 777 $ANDROID HOME
+16. yes | sdkmanager
+- - licenses
+yes I sdkmanager "platform-tools"
+"platforms; android-29*
+SetUp Java and Android Path
+1. Goto Manage Jenkins ->
+Global Tool Configration
+2. Setup Java Path in Env,
+JAVA Default Location = /us/lib/jvm/java-8-openjdk-amd64/
+3. Click Save and Apply and Back button
+4. Click on Configration - in Env. Set the Android_SDK path
+ANDROID_HOME = /us/lib/android-sdk/
+Setup Path in Jenkins
+JAVA Default Location = /us/lib/jvm/java-8-openjdk-and64/
+3. Click Save and Apply and Back button
+4. Click on Configration - in Env. Set the Android_SDK path
