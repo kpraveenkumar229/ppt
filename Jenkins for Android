@@ -1,0 +1,158 @@
+https://www.jndiary.com/post/jenkins-ci-cd-for-android-app
+
+Jenkins CI/CD for Android App
+
+Jenkins is an open source automation tool that allows continuous development, test and delivery of newly implemented code. The tool makes it easier for developer to integrate changes to the project. Jenkins provides both Continuous Integration(CI) and Continuous Delivery(CD) features.
+
+
+Jenkins Pipeline
+Jenkins pipeline is a collection of tasks that are responsible to maintain workflow. It can holds multiple steps for performing one task. Usually Jenkins executes tasks serially.  We can control workflow of pipeline from code by Jenkinsfile.
+
+
+
+Usually there are 4 tasks for building android apps in a pipeline:
+
+Clean 
+- It deletes the build directory and cleans the whole project
+
+Build 
+- It builds the project.
+
+Test
+- It runs unit and UI test.
+
+Assemble Apk
+- It prepares APK and uploads the APK to artifact or other cloud app store.
+
+
+If any of the tasks gets error, all other tasks will not be executed. The following Jenkinsfile code will be worked only for building debug APK.
+
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Clean') {
+            steps {
+                sh './gradlew clean'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh './gradlew buildDebug'
+            }
+        }
+        stage('Unit Test') {
+            steps {
+                sh './gradlew test'
+            }
+        }
+        stage('UI Test') {
+            steps {
+                sh './gradlew connectedAndroidTest'
+            }
+        }
+        stage('Assemble Apk') {
+            steps {
+                sh './gradlew assembleDebug'
+            }
+        }
+    }
+    
+    post {
+         always{
+              archiveArtifacts artifacts: '**/*-debug.apk',
+              onlyIfSuccessful: true
+         }
+    }
+}
+    
+
+
+The following Jenkinsfile code works for both debug and release APK.
+
+
+class Constants {
+    static final String DEBUG_BUILD = 'Debug'
+    static final String RELEASE_BUILD = 'Release'
+}
+
+def isReleaseCandidate() {
+    TAG = "tag: ${env.TAG_NAME}"
+    return TAG ==~ /tag: release-v.*/
+}
+
+def getBuildType() {
+    if(!isReleaseCandidate()) {
+        return Constants.DEBUG_BUILD
+    }
+
+    return Constants.RELEASE_BUILD
+}
+
+pipeline {
+    agent any
+
+    environment {
+        RELEASE_KEY_PASS = credentials('releaseKeyPass')
+        VARIANT = getBuildType()
+    }
+
+    stages {
+        stage('Clean') {
+            steps {
+                script {
+                    sh './gradlew clean'
+                }
+            }
+        }
+
+        stage('Build') {
+            steps {
+                script {
+                    sh './gradlew build${VARIANT}'
+                }
+            }
+        }
+
+        stage('Unit Test') {
+            steps {
+                script {
+                    sh "./gradlew test"
+                }
+            }
+        }
+
+        stage('UI Test') {
+            steps {
+                script {
+                    sh './gradlew connectedAndroidTest'
+                }
+            }
+        }
+
+        stage('Assemble APK') {
+            steps {
+                script {
+                    sh './gradlew assemble${VARIANT} -P releaseKeyPass=$RELEASE_KEY_PASS'
+                }
+            }
+        }
+    }
+
+    post {
+         always{
+                script {
+                    archiveArtifacts artifacts: "**/*-${VARIANT.toLowerCase()}.apk",
+                    onlyIfSuccessful: true
+                }
+         }
+    }
+}
+
+
+CI/CDJenkinsPipelineJenkinsfileAndroid Apk
+
+
+
+Android Development
