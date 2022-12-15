@@ -1,0 +1,82 @@
+AZURE_URL="https://dev.azure.com/ABT-HF-Software/MyCardioMEMS/_apis/build/builds?api-version=6.1-preview.6"
+PERSONAL_ACCESS_TOKEN="gfswwec2zr6fybdb7t2roqseatpvajms35rsegwuj26preo45voq"
+PIPELINE_ID=160 # This is Azure pipeline ID of MyCardiOMEMS pipeline = system.definitionId value
+BUILD_ID=0
+CURL_OP=""
+
+
+log()
+{
+        echo "${1}"
+}
+
+
+launch_azure_pipeline_build() {
+        CURL_OP=$(curl -s --location --request POST ${AZURE_URL} --header 'Content-Type: application/json' \
+                --header "Authorization: Basic ${1}" --header 'Content-Type: application/json' \
+                --data-raw "{ \
+                        \"definition\" : { \
+                                \"id\" : \"${2}\" \
+                        }, \
+                        \"templateParameters\" : { \
+                                \"test\" : \"false\" \
+                        } \
+                }")
+
+        RET_CODE=${?}
+        log "Curl command return code ${RET_CODE}"
+
+		sleep 60
+        
+        if [ "x${CURL_OP}" != "x" ]
+        then
+                BUILD_ID=$(echo ${CURL_OP} | grep -oP "buildId=[0-9]*" | grep -oP "[0-9]*")
+        fi
+}
+
+
+monitor_build_status() {
+        if [ ${BUILD_ID} -ne 0 ]
+        then
+                i=0
+
+                
+BUILD_URL="https://dev.azure.com/ABT-HF-Software/MyCardioMEMS/_apis/build/builds/${BUILD_ID}?api-version=6.1-preview.6"
+
+                while [ ${i} -le 120 ]
+                do
+                        CURL_OP=$(curl -s --location --request GET ${BUILD_URL} --header 'Content-Type: application/json' --header "Authorization: Basic ${1}"  --header 'Content-Type: application/json')
+
+                        BUILD_STATUS=$(echo ${CURL_OP}| grep -oP "\"status\":\"[a-zA-Z]*\"" | awk -F"\"" '{print $4}')
+
+                        if [ ${BUILD_STATUS} == "completed" ]
+                        then
+                                BUILD_RESULT=$(echo ${CURL_OP}| grep -oP "\"result\":\"[a-zA-Z]*\"" | awk -F"\"" '{print $4}')
+
+                                if [ ${BUILD_STATUS} == "succeeded" ]
+                                then
+                                        log "Build is successful"
+                                else
+                                        log "Build completed with status ${BUILD_RESULT}"
+                                fi
+
+                                break
+
+                        else
+                                log "Current build status is ${BUILD_STATUS}"
+                        fi
+
+                        sleep 60 #wait 60 seconds
+
+                        ((i=i+1))
+                done
+        fi
+}
+
+
+
+log "Triggering Azure build"
+
+TOKEN=$(echo  -n ":${PERSONAL_ACCESS_TOKEN}" | openssl enc -base64 -A)
+launch_azure_pipeline_build ${TOKEN} ${PIPELINE_ID}
+monitor_build_status ${TOKEN}
