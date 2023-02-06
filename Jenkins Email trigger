@@ -1,0 +1,13 @@
+Project Name: myCardioMEMS_Android_Application
+Build Number: ${BUILD_NUMBER}                                                                                                                                                                                                                  
+Build Stratus: ${BUILD_STATUS}                                                                                                                                                                                                               
+Console log: ${BUILD_URL}
+Git URL: ${GIT_URL} 
+Git Branch: ${GIT_BRANCH}
+Git Commit: ${GIT_COMMIT}
+Archive Path: https://dev.azure.com/ABT-HF-Software/MyCardioMEMS/_artifacts/feed/myCardioMEMS_Application/UPack/my-first-package/versions
+----------------
+${BUILD_LOG_REGEX, regex="^myCardioMEMSNG_Android_Build_Number : 202*", showTruncatedLines=false}
+
+##URL
+https://gist.github.com/arjabbar/c6f27c64fd18153680f3b52102688c13
