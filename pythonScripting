@@ -1,0 +1,6 @@
+#python script 
+import subprocess
+i = 1
+while i <= 5:
+    subprocess.call("sudo docker run --name t%d -d tomcat"%i,shell=True)
+    i = i + 1
