@@ -4,3 +4,24 @@ i = 1
 while i <= 5:
     subprocess.call("sudo docker run --name t%d -d tomcat"%i,shell=True)
     i = i + 1
+    
+
+#To install 10 tomcat container:
+import subprocess
+i = 1
+while i <= 10:
+    subprocess.call("docker run -d tomcat",shell=True)
+    i = i+1
+
+    
+    
+#To delete list of tomcat container:
+import subprocess
+subprocess.call("docker container ls | grep tomcat | cut -d ' ' -f1 > new",shell=True)
+cids = open('new','r').readlines()
+i = 0
+while i < len(cids):
+        c = cids[i]
+        subprocess.call("docker rm -f %s"%c,shell=True)
+        i = i+1
+
