@@ -1,0 +1,112 @@
+pipeline {
+    agent any
+ 
+    stages {
+     
+         stage('Clone Stage'){
+        steps{
+          checkout([$class: 'GitSCM', branches: [[name: '*/develop']], extensions: [], userRemoteConfigs: [[credentialsId: "${params.credentialsId}", url: "${params.Bitbucket_URL}"]]])
+              echo "GIT_COMMIT: ${GIT_COMMIT}"
+              echo "GIT_BRANCH: ${GIT_BRANCH}"
+              echo "GIT_URL: ${GIT_URL}"
+         }
+      }
+         
+        stage('US-EPHF-myCardioMEMsNG-Android-CI Pipeline trigger stage'){
+            steps{
+              sh '''BUILD_ID=0
+CURL_OP=""
+log()
+{
+        echo "${1}"
+}
+launch_azure_pipeline_build() {
+        CURL_OP=$(curl -s --location --request POST ${AZURE_URL} --header \'Content-Type: application/json\' \\
+                --header "Authorization: Basic ${1}" --header \'Content-Type: application/json\' \\
+                --data-raw "{ \\
+                        \\"definition\\" : { \\
+                                \\"id\\" : \\"${2}\\" \\
+                        }, \\
+                        \\"templateParameters\\" : { \\
+                                \\"test\\" : \\"false\\" \\
+                        } \\
+                }")
+
+        RET_CODE=${?}
+        log "Curl command return code ${RET_CODE}"
+
+                                sleep 60
+        
+        if [ "x${CURL_OP}" != "x" ]
+        then
+                BUILD_ID=$(echo ${CURL_OP} | grep -oP "buildId=[0-9]*" | grep -oP "[0-9]*")
+        fi
+}
+monitor_build_status() {
+        if [ ${BUILD_ID} -ne 0 ]
+        then
+                i=0
+               
+BUILD_URL=https://${URL}/${BUILD_ID}?api-version=6.1-preview.6
+
+                while [ ${i} -le 120 ]
+                do
+                        CURL_OP=$(curl -s --location --request GET ${BUILD_URL} --header \'Content-Type: application/json\' --header "Authorization: Basic ${1}"  --header \'Content-Type: application/json\')
+
+                        BUILD_STATUS=$(echo ${CURL_OP}| grep -oP "\\"status\\":\\"[a-zA-Z]*\\"" | awk -F"\\"" \'{print $4}\')
+                        BuildNumber=$(echo ${CURL_OP}| grep -oP "\\"buildNumber\\":\\"[0-9.]*\\"" | awk -F"\\"" \'{print $4}\')
+
+                        if [ ${BUILD_STATUS} == "completed" ]
+                        then
+                                BUILD_RESULT=$(echo ${CURL_OP}| grep -oP "\\"result\\":\\"[a-zA-Z]*\\"" | awk -F"\\"" \'{print $4}\')
+
+                                if [ ${BUILD_RESULT} == "succeeded" ]
+                                then
+                                        log "Azure DevOps and Jenkins Build is successful"
+                                        log "myCardioMEMSNG_Android_Build_Number : ${BuildNumber}"
+                                elif [ ${BUILD_RESULT} == "failed" ]
+                                then
+                                        log "Azure DevOps Build Failed due to that Jenkins also Failed"
+                                        log "myCardioMEMSNG_Android_Build_Number : ${BuildNumber}"
+                                        exit 1
+                                else
+                                        log "Azure DevOPs Build Cancled due to that Jenkins Build Failed"
+                                        log "myCardioMEMSNG_Android_Build_Number : ${BuildNumber}"
+                                        exit 1
+                                fi
+
+                                break
+
+                        else
+                                log "Current build status is ${BUILD_STATUS}"                               
+                        fi
+
+                        sleep 60 #wait 60 seconds
+
+                        ((i=i+1))
+                done
+        fi
+}
+
+log "myCardioMEMSNG_Android_Build_Number: ${BuildNumber}"
+log "Triggering Azure build"
+
+TOKEN=$(echo  -n ":${PERSONAL_ACCESS_TOKEN}" | openssl enc -base64 -A)
+launch_azure_pipeline_build ${TOKEN} ${PIPELINE_ID}
+monitor_build_status ${TOKEN}
+'''            }
+        }
+      }
+post {
+        always {
+                emailext attachLog: true, body: '''Project Name: ${Project_Name}                                                                                                                                                                                                      
+Build Status: ${BUILD_STATUS}                                                                                                                                                                                                               
+Console log: ${BUILD_URL}
+Azure Build and log Path: ${Azure_DevOps_URL}
+${BUILD_LOG_REGEX, regex="^myCardioMEMSNG_Android_Build_Number : 202*", showTruncatedLines=false}
+${BUILD_LOG_REGEX, regex="^GIT_URL:*", showTruncatedLines=false}
+${BUILD_LOG_REGEX, regex="^GIT_BRANCH:*", showTruncatedLines=false}
+${BUILD_LOG_REGEX, regex="^GIT_COMMIT:*", showTruncatedLines=false}''', replyTo: '${Replay_To_Mail}', subject: '[Jenkins][myCMEMS App][${BUILD_LOG_REGEX, regex="^GIT_BRANCH:*", showTruncatedLines=false}][${BUILD_STATUS}]', to: '${EMAIL_LIST}'
+            }
+      }
+    }
