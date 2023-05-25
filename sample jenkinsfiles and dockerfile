@@ -1,0 +1,44 @@
+FROM openjdk:11.0.14-slim 
+ENV server.port=8080
+ADD ./target/adb2c-user-migration.jar app.jar
+ENTRYPOINT ["java","-jar","/app.jar"]
+
+# second file
+FROM openjdk:8-jdk-alpine 
+ENV server.port=8080
+ADD ./target/certificate-renewal-timer-service.jar app.jar
+ENTRYPOINT ["java","-jar","/app.jar"]
+
+FROM openjdk:11.0.14-slim 
+ENV server.port=8080
+RUN mkdir -p logs 
+RUN groupadd -g 1001 clinic-profile-svc \
+&& useradd -m -u 1001 -g clinic-profile-svc clinic-profile-svc
+RUN chown clinic-profile-svc /logs
+USER clinic-profile-svc
+ADD ./target/clinic-profile-service.jar api.jar
+ENTRYPOINT ["java","-jar","/api.jar"]
+
+pipeline {
+    agent any
+    environment { 
+                PERSONAL_ACCESS_TOKEN = credentials('PERSONAL_ACCESS_TOKEN') 
+
+		}
+    stages {
+        stage('clinic-profile-svc') {
+            steps {
+                sh "chmod +x -R ${env.WORKSPACE}"
+                sh "./azurebuild.sh ${params.PERSONAL_ACCESS_TOKEN}"
+                }
+            }
+        }
+    post{
+        changed{
+            mail to: "glb-ephf-hfdevops@abbott.onmicrosoft.com",
+            subject: "[Jenkins][myCMEMS App][${GIT_BRANCH}]",
+            body:  "${currentBuild.currentResult}: Job ${env.JOB_NAME}\nBuild Number: ${env.BUILD_NUMBER}\nProject Name: HF Clinic Portal\nGit URL: ${GIT_URL}\nGit Commit: ${GIT_COMMIT}\nAzure Build and log Path: https://dev.azure.com/ABT-HF-Software/HF%20Clinic%20Portal/_build?definitionId=353\nGit Branch: ${GIT_BRANCH}\nConsole log at: ${env.BUILD_URL}"
+
+}
+}
+}
